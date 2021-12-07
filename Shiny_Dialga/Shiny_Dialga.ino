@@ -94,7 +94,7 @@ void setup() {
   X_Servo.attach(10);
   Up_Servo.attach(11);
 
-  //Reset servos posiotion
+  //Reset servos position
   HOME_Servo.write(0);
   delay(100);
   A_Servo.write(0);
@@ -142,24 +142,24 @@ void loop() {
     press_A_button();
     delay(4000);
 
-    //Check if Dialga is shiny
+    //Check Dialga color
     Color_Sensor.getRawData(&red, &green, &blue, &c);
-    //Serial.println("R: " + red + " G: " + green + " B: " + blue);
     Serial.print("R: " + red);
     Serial.print(" G: " + green);
     Serial.println(" B: " + blue);
 
+    //If Diagla is not blue, is shiny
     if (blue < 100) {
       shiny = true;
       Serial.println("SHINY!!!");
-      digitalWrite(8, HIGH);
+      digitalWrite(8, HIGH);    //Light up LED to communicate shiny pokemon shows up
       continue;
     } else {
       Serial.println("Non Shiny :<");
     }
 
     //Exit game
-    if (!shiny) {
+    if (!shiny) {   //condition for a security against resetting the game
       press_Home_button();
       delay(1000);
       press_X_button();
