@@ -14,7 +14,6 @@ int max_pos = 30;
 int min_pos = 0;
 int pos;
 
-
 /* Connect SCL    to analog 5
    Connect SDA    to analog 4
    Connect VDD    to 3.3V DC
@@ -25,62 +24,18 @@ uint16_t red, green, blue, c; //, colorTemp, lux;
 int resets = 0;
 bool shiny = false;
 
-//HOME BUTTON
-void press_Home_button() {
-  //Press button
+//PRESS BUTTON
+//press_button(HOME_Servo);
+//press_button(A_Servo);
+//press_button(X_Servo);
+//press_button(Up_Servo);
+void press_button(Servo servo) {
   for (pos = min_pos; pos <= max_pos; pos++) {
-    HOME_Servo.write(pos);
+    servo.write(pos);
     delay(15);
   }
-
-  //Go back
   for (pos = max_pos; pos >= min_pos; pos--) {
-    HOME_Servo.write(pos);
-    delay(15);
-  }
-}
-
-//A BUTTON
-void press_A_button() {
-  //Press button
-  for (pos = min_pos; pos <= max_pos; pos++) {
-    A_Servo.write(pos);
-    delay(15);
-  }
-
-  //Go back
-  for (pos = max_pos; pos >= min_pos; pos--) {
-    A_Servo.write(pos);
-    delay(15);
-  }
-}
-
-//X BUTTON
-void press_X_button() {
-  //Press button
-  for (pos = min_pos; pos <= max_pos; pos++) {
-    X_Servo.write(pos);
-    delay(15);
-  }
-
-  //Go back
-  for (pos = max_pos; pos >= min_pos; pos--) {
-    X_Servo.write(pos);
-    delay(15);
-  }
-}
-
-//Up BUTTON
-void press_Up_button() {
-  //Press button
-  for (pos = min_pos; pos <= max_pos; pos++) {
-    Up_Servo.write(pos);
-    delay(15);
-  }
-
-  //Go back
-  for (pos = max_pos; pos >= min_pos; pos--) {
-    Up_Servo.write(pos);
+    servo.write(pos);
     delay(15);
   }
 }
@@ -123,23 +78,23 @@ void loop() {
     Serial.println("Reset " + resets);
 
     //Lauch game
-    press_A_button();
+    press_button(A_Servo);
     delay(1500);
-    press_A_button();
+    press_button(A_Servo);
 
     //Wait for load game
     delay(25000);
-    press_A_button();
+    press_button(A_Servo);
     delay(3000);
-    press_A_button();
+    press_button(A_Servo);
     delay(13000);
 
     //Interact with Dialga
-    press_Up_button();
+    press_button(Up_Servo);
     delay(3000);
-    press_A_button();
+    press_button(A_Servo);
     delay(1000);
-    press_A_button();
+    press_button(A_Servo);
     delay(4000);
 
     //Check Dialga color
@@ -159,12 +114,12 @@ void loop() {
     }
 
     //Exit game
-    if (!shiny) {   //condition for a security against resetting the game
-      press_Home_button();
+    if (!shiny) {   //condition for a security against resetting the game if shiny shows up
+      press_button(HOME_Servo);
       delay(1000);
-      press_X_button();
+      press_button(X_Servo);
       delay(1000);
-      press_A_button();
+      press_button(A_Servo);
       delay(1000);
       resets++;
     }
