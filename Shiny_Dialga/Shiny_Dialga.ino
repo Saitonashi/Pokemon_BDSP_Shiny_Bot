@@ -1,7 +1,7 @@
 //@author Saitonashi
 
 //Servo pins: 6(HOME), 9(A), 10(X), 11(UP)
-//LED pin: 4
+//LED pin: 4 (optional)
 //Color Sensor pin: A4(SDA), A5(SCL)
 
 #include <Wire.h>
@@ -14,7 +14,7 @@ Servo X_Servo;
 Servo Up_Servo;
 int pos;
 
-/* Connect LED    to analog 0
+/* Connect LED    to analog 0 (optional)
    Connect SCL    to analog 5
    Connect SDA    to analog 4
    Connect VDD    to 5V DC
