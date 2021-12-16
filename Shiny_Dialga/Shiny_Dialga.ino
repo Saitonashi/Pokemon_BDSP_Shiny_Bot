@@ -1,3 +1,5 @@
+//@author Saitonashi
+
 //Servo pins: 6(HOME), 9(A), 10(X), 11(UP)
 //LED pin: 4
 //Color Sensor pin: A4(SDA), A5(SCL)
@@ -12,7 +14,8 @@ Servo X_Servo;
 Servo Up_Servo;
 int pos;
 
-/* Connect SCL    to analog 5
+/* Connect LED    to analog 0
+   Connect SCL    to analog 5
    Connect SDA    to analog 4
    Connect VDD    to 5V DC
    Connect GROUND to common ground */
@@ -65,8 +68,7 @@ void press_Up_button() {
     Up_Servo.write(pos);
     delay(5);
   }
-  delay(250
-       );
+  delay(250);
   for (pos = 40; pos <= 90; pos += 1) {
     Up_Servo.write(pos);
     delay(5);
@@ -83,6 +85,7 @@ void setup() {
   Up_Servo.attach(11);
   //Init LED
   pinMode(4, OUTPUT);
+  pinMode(A0, OUTPUT);
   digitalWrite(4, HIGH);
 
   //Reset servos position
@@ -106,6 +109,7 @@ void setup() {
   }
   Color_Sensor.setInterrupt(true);
 
+  digitalWrite(A0, HIGH);
   digitalWrite(4, LOW);
 }
 
@@ -117,23 +121,23 @@ void loop() {
     Serial.print(" ; ");
 
     //Lauch game
-    press_A_button();
-    delay(1500);
-    press_A_button();
+    press_A_button();       //delay 500
+    delay(1000);
+    press_A_button();       //delay 500
 
     //Wait for load game
     delay(25000);
-    press_A_button();
-    delay(3000);
-    press_A_button();
+    press_A_button();       //delay 500
+    delay(2500);
+    press_A_button();       //delay 500
     delay(13000);
 
     //Interact with Dialga
-    press_Up_button();
-    delay(3000);
-    press_A_button();
-    delay(1000);
-    press_A_button();
+    press_Up_button();      //delay 750
+    delay(2000);
+    press_A_button();       //delay 500
+    delay(500);
+    press_A_button();       //delay 500
     delay(4150);
 
     //Check Dialga color
@@ -158,13 +162,16 @@ void loop() {
 
     //Exit game
     if (!shiny) {   //condition for a security against resetting the game if shiny shows up
-      press_Home_button();
-      delay(1000);
-      press_X_button();
-      delay(1000);
-      press_A_button();
-      delay(1000);
-      resets++;
+      press_Home_button();  //delay 520
+      delay(500);
+      press_X_button();     //delay 500
+      delay(500);
+      press_A_button();     //delay 500
+      delay(500);
+      resets++;             //sumary delay 58920ms
+                            //61 resets per hour
+                            //sumary delay after optymalization 54920ms (4 sec diffferent)
+                            //65 resets per hour
     }
   }
 }
