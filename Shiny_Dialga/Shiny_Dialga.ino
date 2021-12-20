@@ -30,9 +30,13 @@ uint16_t red, green, blue, c;   // colorTemp, lux;
 const int rs = 12, en = 13, d4 = 7, d5 = 5, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-int resets = 0;
+//EEPROM
+uint32_t resets;
+int eeAddress = 0;
+
 bool shiny = false;
 
+//---------------------------------------------------------------------
 //PRESS HOME BUTTON
 void press_Home_button() {
   for (pos = 90; pos <= 142; pos += 1) {
@@ -82,10 +86,10 @@ void press_Up_button() {
     delay(5);
   }
 }
+//---------------------------------------------------------------------
 
 void setup() {
   Serial.begin(9600);
-
   //Init LCD
   lcd.begin(16,2);  //(col,row)
   lcd.print("Shiny Bot V2.0");
@@ -128,6 +132,9 @@ void setup() {
     lcd.print("No TCS34725 found");
     while (1);
   }
+
+  //Read data from EEPROM
+  EEPROM.get(eeAddress, resets);
 
   digitalWrite(A0, HIGH);
   digitalWrite(4, LOW);
@@ -200,10 +207,12 @@ void loop() {
       delay(500);
       press_A_button();     //delay 500
       delay(500);
-      resets++;             //sumary delay 58920ms
+      resets++;             
+                            //sumary delay 58920ms
                             //61 resets per hour
                             //sumary delay after optymalization 54920ms (4 sec diffferent)
                             //65 resets per hour
+      EEPROM.put(eeAddress, resets);
     }
   }
 }
