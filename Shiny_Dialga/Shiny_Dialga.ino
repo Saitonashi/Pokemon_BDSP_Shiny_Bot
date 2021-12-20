@@ -7,13 +7,17 @@
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 #include <Servo.h>
+#include <LiquidCrystal.h>
+#include <EEPROM.h>
 
+//Servos
 Servo HOME_Servo;
 Servo A_Servo;
 Servo X_Servo;
 Servo Up_Servo;
 int pos;
 
+//Color Sensor
 /* Connect LED    to analog 0 (optional)
    Connect SCL    to analog 5
    Connect SDA    to analog 4
@@ -21,6 +25,10 @@ int pos;
    Connect GROUND to common ground */
 Adafruit_TCS34725 Color_Sensor = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 uint16_t red, green, blue, c;   // colorTemp, lux;
+
+//LCD
+const int rs = 12, en = 13, d4 = 7, d5 = 5, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 int resets = 0;
 bool shiny = false;
@@ -40,11 +48,11 @@ void press_Home_button() {
 
 //PRESS A BUTTON
 void press_A_button() {
-  for (pos = 90; pos >= 40; pos -= 1) {
+  for (pos = 90; pos >= 38; pos -= 1) {
     A_Servo.write(pos);
     delay(5);
   }
-  for (pos = 40 ; pos <= 90; pos += 1) {
+  for (pos = 38 ; pos <= 90; pos += 1) {
     A_Servo.write(pos);
     delay(5);
   }
@@ -78,6 +86,12 @@ void press_Up_button() {
 void setup() {
   Serial.begin(9600);
 
+  //Init LCD
+  lcd.begin(16,2);  //(col,row)
+  lcd.print("Shiny Bot V2.0");
+  lcd.setCursor(0,1);
+  //lcd.print("Poke bot 2.0");
+  
   //Init servo
   HOME_Servo.attach(6);
   A_Servo.attach(9);
@@ -90,6 +104,7 @@ void setup() {
 
   //Reset servos position
   Serial.println("Reset servos position");
+  lcd.print("Reset servos pos");
   delay(4000);
   HOME_Servo.write(90);
   delay(500);
@@ -100,14 +115,19 @@ void setup() {
   Up_Servo.write(90);
   delay(500);
 
+  lcd.setCursor(0,1);
+  lcd.print("                ");
+  lcd.setCursor(0,1);
+
   //Check color sensor connection
   if (Color_Sensor.begin()) {
     Serial.println("Found sensor");
+    lcd.print("Found sensor");
   } else {
     Serial.println("No TCS34725 found ... check your connections");
+    lcd.print("No TCS34725 found");
     while (1);
   }
-  Color_Sensor.setInterrupt(true);
 
   digitalWrite(A0, HIGH);
   digitalWrite(4, LOW);
@@ -119,6 +139,11 @@ void loop() {
     Serial.print("Reset ");
     Serial.print(resets);
     Serial.print(" ; ");
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Reset:");
+    lcd.setCursor(6,0);
+    lcd.print(resets);
 
     //Lauch game
     press_A_button();       //delay 500
@@ -149,15 +174,22 @@ void loop() {
     Serial.print(" B: ");
     Serial.print(blue, DEC);
     Serial.print(" ; ");
-
+    lcd.setCursor(0,1);
+    lcd.print("B:");
+    lcd.setCursor(2,1);
+    lcd.print(blue, DEC);
+    lcd.setCursor(6,1);
+        
     //If Diagla is not blue, is shiny
     if (blue < 600) {
       shiny = true;
       Serial.println("SHINY!!!");
+      lcd.print("SHINY!!!");
       digitalWrite(4, HIGH);    //Light up LED to communicate shiny pokemon shows up
       continue;
     } else {
       Serial.println("Non Shiny :<");
+      lcd.print("Non Shiny");
     }
 
     //Exit game
